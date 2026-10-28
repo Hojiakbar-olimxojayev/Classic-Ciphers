@@ -52,6 +52,9 @@ function buildFields() {
   $('fields').innerHTML = fieldList().map(([id, l, tx]) => `<label><span data-i18n="${l}"></span><input id="${id}" type="${tx ? 'text' : 'number'}"></label>`).join('');
   hints();
 }
+
+// That is very good
+
 function onAlgo() {
   const v = VAR[$('algo').value], cur = $('variant').value;
   $('varRow').hidden = !v;
