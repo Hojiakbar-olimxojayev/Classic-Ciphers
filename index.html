@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Classic Ciphers</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <h1 data-i18n="title"></h1>
+  <div class="tools"><button id="lang" class="ghost"></button><button id="theme" class="ghost">☾</button></div>
+</header>
+<main>
+<section class="card">
+  <label><span data-i18n="algo"></span>
+    <select id="algo">
+      <option value="caesar" data-i18n="a_caesar"></option>
+      <option value="vernam" data-i18n="a_vernam"></option>
+      <option value="vigenere" data-i18n="a_vigenere"></option>
+      <option value="affine" data-i18n="a_affine"></option>
+      <option value="bigram" data-i18n="a_bigram"></option>
+    </select></label>
+  <div class="seg">
+    <label><input type="radio" name="mode" value="enc" checked><span data-i18n="enc"></span></label>
+    <label><input type="radio" name="mode" value="dec"><span data-i18n="dec"></span></label>
+  </div>
+  <label id="varRow"><span data-i18n="variant"></span><select id="variant"></select></label>
+  <label><span data-i18n="text"></span><textarea id="text" rows="4" data-ph="ph_text"></textarea></label>
+  <div id="fields"></div>
+  <label id="nlRow"><span data-i18n="nonlet"></span>
+    <select id="nonlet"><option value="keep" data-i18n="keep"></option><option value="remove" data-i18n="remove"></option></select></label>
+  <div class="row"><button id="auto" class="ghost" data-i18n="auto"></button><button id="run" data-i18n="run"></button></div>
+  <p id="err" class="err"></p>
+</section>
+<section class="card" id="out" hidden>
+  <h2 data-i18n="result"></h2>
+  <div id="res" class="final"></div>
+  <h2 data-i18n="steps"></h2>
+  <div class="ctl">
+    <button id="prev" class="ghost">◀</button><span id="pos"></span><button id="next" class="ghost">▶</button>
+    <button id="play"></button><button id="all" class="ghost"></button>
+  </div>
+  <div id="stepbox"></div>
+</section>
+</main>
+<script src="ciphers.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
