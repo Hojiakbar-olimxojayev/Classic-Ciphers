@@ -1,4 +1,4 @@
-// Classic cipher algorithms. Each returns {out, steps:[{title, body}]}. T() = translator from app.js
+
 const AZ = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', mod = (n, m) => ((n % m) + m) % m, gcd = (a, b) => b ? gcd(b, a % b) : a;
 const inv = (a, m) => { a = mod(a, m); for (let i = 1; i < m; i++)if (a * i % m === 1) return i; return null };
 const isL = c => /[A-Za-z]/.test(c), letters = t => [...t].filter(isL).map(c => c.toUpperCase());
@@ -51,28 +51,23 @@ function affine(t, { a, b, dec, keep }) {
   };
 }
 
-function vernam(t, { key, dec, keep, variant }) {
-  if (variant === 'letters') {
-    const K = letters(key), L = letters(t); if (K.length < L.length) throw Error(T('e_vlen'));
-    const s = dec ? -1 : 1, p = L.map(c => AZ.indexOf(c)), q = p.map((_, i) => AZ.indexOf(K[i])), r = p.map((v, i) => mod(v + s * q[i], 26)), o = r.map(v => AZ[v]);
-    return {
-      out: rebuild(t, o, keep), steps: [
-        { title: T('s_keyrep'), body: rows([[T('in'), ...L], [T('key'), ...K.slice(0, L.length)]]) },
-        { title: T('s_nums'), body: rows([['P/C', ...p], ['K', ...q]]) },
-        { title: T('s_each'), body: rows([[`P/C ${sg(s)} K`, ...p.map((v, i) => v + s * q[i])], ['mod 26', ...r], [T('out'), ...o.map(hl)]]) }]
-    };
-  }
-  const kb = [...new TextEncoder().encode(key)]; let tb;
-  if (dec) { const h = t.replace(/[^0-9a-f]/gi, ''); if (!h.length || h.length % 2) throw Error(T('e_hex')); tb = h.match(/../g).map(x => parseInt(x, 16)) }
-  else tb = [...new TextEncoder().encode(t)];
-  if (kb.length < tb.length) throw Error(T('e_vlen'));
-  const ob = tb.map((v, i) => v ^ kb[i]), ch = b => b > 32 && b < 127 ? String.fromCharCode(b) : '·',
-    out = dec ? new TextDecoder().decode(new Uint8Array(ob)) : ob.map(hex).join(' ');
+const VA = AZ + '012345', b5 = n => n.toString(2).padStart(5, '0');
+function vernam(t, { key, dec, keep }) {
+  const U = t.toUpperCase(), ok = c => (dec ? VA : AZ).includes(c), L = [...U].filter(ok),
+    K = [...key.toUpperCase()].filter(c => VA.includes(c));
+  if (!L.length) throw Error(T('e_empty'));
+  if (!K.length) throw Error(T('e_key'));
+  if (K.length < L.length) throw Error(T('e_vlen'));
+  const k = K.slice(0, L.length), p = L.map(c => VA.indexOf(c)), q = k.map(c => VA.indexOf(c)),
+    r = p.map((v, i) => v ^ q[i]), o = r.map(v => VA[v]), a = dec ? 'C' : 'P';
+  let out = '', i = 0;
+  if (keep) { for (const c of U) out += ok(c) ? o[i++] : /\s/.test(c) ? c : '' } else out = o.join('');
   return {
     out, steps: [
-      { title: T('s_bits'), body: rows([[dec ? 'hex' : T('in'), ...tb.map(v => dec ? hex(v) : ch(v))], [T('bits'), ...tb.map(bin)]]) },
-      { title: T('s_keybits'), body: rows([[T('key'), ...tb.map((_, i) => ch(kb[i]))], [T('bits'), ...tb.map((_, i) => bin(kb[i]))]]) },
-      { title: 'XOR ⊕', body: rows([[T('in'), ...tb.map(bin)], ['⊕ ' + T('key'), ...tb.map((_, i) => bin(kb[i]))], ['=', ...ob.map(v => hl(bin(v)))], [dec ? T('out') : 'hex', ...ob.map(v => dec ? ch(v) : hex(v))]]) }]
+      { title: T('s_table'), body: note(T('table_note')) + rows([[T('sym'), ...VA], [T('bits'), ...[...VA].map((_, j) => b5(j))]]) },
+      { title: T('s_xrule'), body: note(T('xr_note')) + rows([['A', 0, 0, 1, 1], ['B', 0, 1, 0, 1], ['A ⊕ B', 0, 1, 1, 0]]) },
+      { title: T('s_bits'), body: rows([[T('in'), ...L], [T('bits'), ...p.map(b5)], [T('key'), ...k], [T('bits'), ...q.map(b5)]]) },
+      { title: 'XOR ⊕', body: note(dec ? T('xn_dec') : T('xn_enc')) + rows([[a, ...L], [a + ' ' + T('bits'), ...p.map(b5)], ['⊕ K', ...q.map(b5)], ['=', ...r.map(b5)], [T('out'), ...o.map(hl)]]) }]
   };
 }
 

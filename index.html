@@ -34,6 +34,10 @@
             <option value="affine" data-i18n="a_affine"></option>
             <option value="bigram" data-i18n="a_bigram"></option></select
         ></label>
+        <details id="infoBox" class="info" open>
+          <summary data-i18n="info_t"></summary>
+          <div id="info"></div>
+        </details>
         <div class="seg">
           <label
             ><input type="radio" name="mode" value="enc" checked /><span
@@ -55,6 +59,7 @@
           ><textarea id="text" rows="4" data-ph="ph_text"></textarea>
         </label>
         <div id="fields"></div>
+        <p id="keyhint"></p>
         <label id="nlRow"
           ><span data-i18n="nonlet"></span>
           <select id="nonlet">
