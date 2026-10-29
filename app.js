@@ -59,7 +59,7 @@ function onAlgo() {
   const v = VAR[$('algo').value], cur = $('variant').value;
   $('varRow').hidden = !v;
   if (v) { $('variant').innerHTML = v.map(x => `<option value="${x}" data-i18n="v_${x}"></option>`).join(''); if (v.includes(cur)) $('variant').value = cur }
-  
+
   const ICON_COPY = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
   const ICON_OK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
   $('copy').innerHTML = ICON_COPY;
@@ -70,6 +70,16 @@ function onAlgo() {
     $('copy').innerHTML = ICON_OK; $('copy').classList.add('done');
     setTimeout(() => { $('copy').innerHTML = ICON_COPY; $('copy').classList.remove('done') }, 1500);
   };
+
+  let wasMobile = innerWidth < 600;
+  addEventListener('resize', () => {
+    const m = innerWidth < 600;
+    if (m !== wasMobile) { wasMobile = m; if (!$('out').hidden) run() }
+  });
+  
+  const ta = $('text');
+  const grow = () => { ta.style.height = 'auto'; ta.style.height = Math.min(ta.scrollHeight + 2, 320) + 'px' };
+  ta.addEventListener('input', grow);
   buildFields();
 }
 function auto() {

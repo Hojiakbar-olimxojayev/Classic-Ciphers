@@ -295,3 +295,20 @@ main > * {
     padding: 0;
   }
 }
+
+.tw + .tw {
+  margin-top: 10px;
+}
+.tw {
+  padding-bottom: 2px;
+}
+
+textarea {
+  width: 100%;
+  max-width: 100%;
+  min-height: 96px;
+  max-height: 320px;
+  resize: vertical;
+  overflow-y: auto;
+  line-height: 1.5;
+}
